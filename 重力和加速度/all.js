@@ -146,22 +146,37 @@ canvas.addEventListener("mousedown",function(e){
       if ( dist < Ball_1.r) //當距離小於半徑代表捕捉到此球體
         {
             Ball_1.dragging = true;
-        }
+        } 
     })
 
 canvas.addEventListener("mouseup",function(e){
     Ball_1.dragging = false;
+    canvas.style.cursor = "initial"
 })
 
 canvas.addEventListener("mousemove",function(e){
     let nowPos = { x:e.x - (e.pageX - e.offsetX),y:e.y - (e.pageY - e.offsetY) }
-    console.log(nowPos)
+    // console.log(nowPos)
     if (Ball_1.dragging) {
         let dx = nowPos.x - mousePos.x  // mousePos代表按下去之後取得的位置  now - mousepos這個距離差就是移動的距離
-        let dy = nowPos.y - mousePos.y
-        console.log(dx,dy)
+        let dy = nowPos.y - mousePos.y  // dx dy為兩點移動的變化量
+        // console.log(dx,dy)
         Ball_1.p.x += dx
         Ball_1.p.y += dy
         mousePos = nowPos
+
+        Ball_1.v.x = dx //最後的速度再加上最後變化量就能做到拋飛的動作
+        Ball_1.v.y = dy
+    } 
+    let dist  = getDistance(nowPos,Ball_1.p)
+    if (dist < Ball_1.r) {
+        canvas.style.cursor = "move"
+    } else {
+        canvas.style.cursor = "initial"
     }
+    // if(Ball_1.dragging) {
+    //     canvas.style.cursor = "move"
+    // } else {
+    //     canvas.style.cursor = "initial"
+    // }
 })
