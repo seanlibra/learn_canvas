@@ -4,20 +4,20 @@ const ctx = canvas.getContext("2d")
 const ww = canvas.width = 800
 const wh = canvas.height = 800
 
-const Ball = function() { //初始化Ball的函數建構子
+const Ball = function( x = ww / 2 , y = wh / 2 ,vx = 3, vy = 3 , r = 50) { //初始化Ball的函數建構子
     this.p = {
-        x:ww / 2,
-        y:wh / 2
+        x:x,
+        y:y,
     },
     this.v = {
-        x:3,
-        y:3
+        x:vx,
+        y:vy
     }
     this.a = {
         x:0,
         y:1
     },
-    this.r = 50
+    this.r = r
     this.dragging = false
 }
 
@@ -65,6 +65,7 @@ Ball.prototype.draw = function() { //在Ball的原型上註冊draw事件
         ctx.fillStyle=controls.color
         ctx.fill()
     ctx.restore()
+    this.drawV()
 }
 
 Ball.prototype.update = function() {
@@ -99,19 +100,47 @@ Ball.prototype.checkBoundary = function() {
     }
 }
 
+Ball.prototype.drawV = function() {
+    ctx.save() 
+      ctx.beginPath()
+      ctx.translate(this.p.x,this.p.y)
+      ctx.scale(3,3)
+      ctx.moveTo(0,0)
+      ctx.lineTo(this.v.x,this.v.y) //代表除了x軸和y軸外第三條線的速度
+      ctx.strokeStyle="blue"
+      ctx.stroke()
+
+      ctx.beginPath()
+      ctx.moveTo(0,0)
+      ctx.lineTo(this.v.x,0)
+      ctx.strokeStyle="red"
+      ctx.stroke()
+
+      ctx.beginPath()
+      ctx.moveTo(0,0)
+      ctx.lineTo(0,this.v.y)
+      ctx.strokeStyle="green"
+      ctx.stroke()
+
+
+    ctx.restore()
+}
 
 let Ball_1 
 
 function init () {
-    Ball_1 = new Ball //建立Ball的實體
+    Ball_1 = new Ball(200,200,10,10,50 ) //建立Ball的實體
+    Ball_2 = new Ball(0,0,20,10,30)
 }
 init()
 
 function update() {
   if (controls.update) {
     Ball_1.update() //先註冊Ball_1的執行，之後再使用setInterval固定在一秒內執行30次外部的update FPS = 30
+    Ball_2.update()
   }
   Ball_1.checkBoundary()
+  Ball_2.checkBoundary()
 }
 
 setInterval(update,1000/30)
@@ -119,8 +148,9 @@ setInterval(update,1000/30)
 function draw() {
     ctx.fillStyle="rgba(0,0,0,.5)"
     ctx.fillRect(0,0,ww,wh)
-
+    Ball_2.draw()
     Ball_1.draw()
+    // Ball_2.drwa()
     setTimeout(draw,1000/controls.FPS)
 }
 
